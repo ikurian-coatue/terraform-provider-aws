@@ -595,6 +595,11 @@ func resourceEnvironmentUpdate(ctx context.Context, d *schema.ResourceData, meta
 			input.WeeklyMaintenanceWindowStart = aws.String(d.Get("weekly_maintenance_window_start").(string))
 		}
 
+		// worker replacement strategy is only available on the update environment command & needs
+		// to be set each time the environment is updated, as it does not seem to persist in the environment
+		// across successive runs of the update command.
+		input.WorkerReplacementStrategy = awstypes.WorkerReplacementStrategy(d.Get("worker_replacement_strategy").(string))
+
 		_, err := conn.UpdateEnvironment(ctx, input)
 
 		if err != nil {
